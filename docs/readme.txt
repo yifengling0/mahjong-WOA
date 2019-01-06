@@ -1,29 +1,40 @@
-���̲���:
+这个游戏是N年前一个高手开源的，现在是找不到原作者了。利用了电子基盘的图片资源参考了很多当时街机麻将的游戏。
 
-A-N: ����/����
-����: ѡ����ƣ����ƣ����ƣ����ƣ�����
-�ո��: ִ����ѡ��Ķ���
-Y: �͵��Խ�����
+我开这个库是准备把他移植到Windows 8.1RT上， 好在我的Lumia上面玩：） 也会编译成64bit arm在Windows 10 on ARM
+的机器上运行。
 
-������:
+目前只能Win32下玩，为了编译到ARM上需要移植SDL等一系列的开源库，WIP
 
-����Ļ�·��������������ƻ���ƣ�����Ҽ�����ѡ�����/����/����/����/���ƣ�����Ļ�Ϸ�����������ִ����ѡ��Ķ�����
 
-mj.ini �ļ�����:
+操作手册
+---------------------------------------
+
+键盘操作:
+
+A-N: 摸牌/打牌
+光标键: 选择吃牌，碰牌，杠牌，胡牌，听牌
+空格键: 执行所选择的动作
+Y: 和电脑交换牌
+
+鼠标操作:
+
+在屏幕下方点击左键可以摸牌或打牌，点击右键可以选择吃牌/碰牌/杠牌/胡牌/听牌，在屏幕上方点击左键可以执行所选择的动作。
+
+mj.ini 文件设置:
 
 [GAME]
-TuiDaoHu = 0                  ; �Ƿ�����Ƶ���
-AutoDraw = 0                  ; �Ƿ��Զ�����
-FirstChancePercent = 20       ; ���֡���ʼ���ᡱ�ĸ��� (0-100)
-LastChancePercent = 20        ; ���֡������ᡱ�ĸ��� (0-100)
-ReachBonusPercent = 5         ; ���֡���ֱ�غ����ĸ��� (0-100)
-BonusGamePercent = 2          ; ���֡����Ƴ�Ѫ���ĸ��� (0-100)
-DonDen = 5                    ; ÿ�ֿ��Ժ͵��Ի��ƵĴ���
+TuiDaoHu = 0                  ; 是否可以推倒和
+AutoDraw = 0                  ; 是否自动摸打
+FirstChancePercent = 20       ; 出现“开始机会”的概率 (0-100)
+LastChancePercent = 20        ; 出现“最后机会”的概率 (0-100)
+ReachBonusPercent = 5         ; 出现“立直必胡”的概率 (0-100)
+BonusGamePercent = 2          ; 出现“配牌出血”的概率 (0-100)
+DonDen = 5                    ; 每局可以和电脑换牌的次数
 
 [OPTIONS]
-FullScreen = 0                ; �Ƿ�ȫ����ʾ
-Sound = 1                     ; �Ƿ���������Ч��
-Music = 1                     ; �Ƿ���������
-SoundVolume = 1.0             ; ����Ч������
-MusicVolume = 1.0             ; ��������
+FullScreen = 0                ; 是否全屏显示
+Sound = 1                     ; 是否启用声音效果
+Music = 1                     ; 是否启用音乐
+SoundVolume = 1.0             ; 声音效果音量
+MusicVolume = 1.0             ; 音乐音量
 
