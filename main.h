@@ -69,7 +69,11 @@
 #define FONTS_DIR PREFIX "fonts/"
 #endif
 
+typedef SDL_Keycode SDLKey;
+extern SDL_Texture *sdlTexture;
 extern SDL_Surface *gpScreen;
+extern SDL_Renderer *grenderer;
+
 extern bool g_fNoSound;
 extern bool g_fNoMusic;
 

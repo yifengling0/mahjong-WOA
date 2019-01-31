@@ -43,6 +43,8 @@ CGeneral::~CGeneral()
    DeleteCursor();
 }
 
+
+
 void CGeneral::DrawBG(int girlnum, int color)
 {
    if (girlnum < 0 || girlnum > 4 || color < 0 || color > 2) {
@@ -99,7 +101,7 @@ void CGeneral::EraseArea(int x, int y, int w, int h, int girlnum, int color)
 
 void CGeneral::ScreenFade(int duration, SDL_Surface *s)
 {
-   SDL_Surface *pNewFadeSurface = SDL_CreateRGBSurface(gpScreen->flags & (~SDL_HWSURFACE),
+   SDL_Surface *pNewFadeSurface = SDL_CreateRGBSurface(gpScreen->flags,
       gpScreen->w, gpScreen->h, gpScreen->format->BitsPerPixel, gpScreen->format->Rmask,
       gpScreen->format->Gmask, gpScreen->format->Bmask,
       gpScreen->format->Amask);
@@ -108,7 +110,9 @@ void CGeneral::ScreenFade(int duration, SDL_Surface *s)
       // cannot create surface, just blit the surface to the screen
       if (s != NULL) {
          SDL_BlitSurface(s, NULL, gpScreen, NULL);
-         SDL_UpdateRect(gpScreen, 0, 0, gpScreen->w, gpScreen->h);
+         //SDL_UpdateRect(gpScreen, 0, 0, gpScreen->w, gpScreen->h);
+		 UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
+		 
       }
       return;
    }
@@ -126,7 +130,8 @@ void CGeneral::ScreenFade(int duration, SDL_Surface *s)
          // cannot lock screen, just blit the surface to the screen
          if (s != NULL) {
             SDL_BlitSurface(s, NULL, gpScreen, NULL);
-            SDL_UpdateRect(gpScreen, 0, 0, gpScreen->w, gpScreen->h);
+            //SDL_UpdateRect(gpScreen, 0, 0, gpScreen->w, gpScreen->h);
+			UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
          }
          return;
       }
@@ -160,14 +165,16 @@ void CGeneral::ScreenFade(int duration, SDL_Surface *s)
       } while (++pw != stop);
 
       now = SDL_GetTicks();
-      SDL_UpdateRect(gpScreen, 0, 0, gpScreen->w, gpScreen->h);
+      //SDL_UpdateRect(gpScreen, 0, 0, gpScreen->w, gpScreen->h);
+	  UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
    } while (now - first + 50 < duration);
 
    free(fadeFromRGB);
    free(fadeToRGB);
 
    SDL_BlitSurface(pNewFadeSurface, NULL, gpScreen, NULL);
-   SDL_UpdateRect(gpScreen, 0, 0, gpScreen->w, gpScreen->h);
+   //SDL_UpdateRect(gpScreen, 0, 0, gpScreen->w, gpScreen->h);
+   UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
 
    if (SDL_MUSTLOCK(gpScreen))
       SDL_UnlockSurface(gpScreen);
@@ -309,7 +316,7 @@ void CGeneral::GameOver()
       // Draw the new arrow
       DrawText(">", 400, iCurSel ? 390 : 350, 1, 255, 255, 0);
 
-      UpdateScreen();
+	  UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
 
       if (SDL_WaitEvent(&event)) {
          if (event.type == SDL_KEYDOWN) {
@@ -330,7 +337,7 @@ void CGeneral::GameOver()
 
             case SDLK_y:
                PlayMusic(NULL);
-               PlaySound(SND_SOUND1);
+               PlayMixSound(SND_SOUND1);
                UTIL_Delay(2000);
                ScreenFade(300);
                return;
@@ -340,7 +347,7 @@ void CGeneral::GameOver()
             case SDLK_SPACE:
                PlayMusic(NULL);
                if (iCurSel == 0) {
-                  PlaySound(SND_SOUND1);
+                  PlayMixSound(SND_SOUND1);
                   UTIL_Delay(2000);
                   ScreenFade(300);
                   return;
@@ -372,7 +379,7 @@ void CGeneral::BonusGame()
                  0xb8, 0xe6, 0x88, 0x8f, 0x00};
 
    SDL_BlitSurface(m_imgBonusGame, NULL, gpScreen, NULL);
-   UpdateScreen();
+   UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
    PlayMusic(m_musBGame, 0);
    UTIL_Delay(6000);
 
@@ -402,15 +409,15 @@ void CGeneral::BonusGame()
 
    for (i = 0; i < 4; i++) {
       DrawUTF8Text(&dat[i * 4], 150 + i * 100, 100, 2, 255, 255, 0);
-      UpdateScreen();
-      PlaySound(SND_SOUND1);
+      UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
+      PlayMixSound(SND_SOUND1);
       UTIL_Delay(1300);
    }
 
    DrawUTF8Text(&dat[i * 4], 175, 200, 2, 0, 255, 255);
 
-   PlaySound(SND_DISCARD2);
-   UpdateScreen();
+   PlayMixSound(SND_DISCARD2);
+   UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
    UTIL_Delay(2500);
    ScreenFade();
 }
@@ -481,29 +488,30 @@ void CGeneral::DrawMessage(const char *sz)
          SDL_FreeSurface(saved);
          saved = NULL;
 
-         SDL_UpdateRect(gpScreen, 150, 300, 340, 60);
+         //SDL_UpdateRect(gpScreen, 150, 300, 340, 60);
+		 UpdateScreen(150, 300, 340, 60);
       }
       return;
    }
 
    // Save the current screen if no screen is saved
    if (saved == NULL) {
-      saved = SDL_CreateRGBSurface(gpScreen->flags & (~SDL_HWSURFACE),
+      saved = SDL_CreateRGBSurface(gpScreen->flags,
          340, 60, gpScreen->format->BitsPerPixel, gpScreen->format->Rmask,
          gpScreen->format->Gmask, gpScreen->format->Bmask,
          gpScreen->format->Amask);
 
-      SDL_SetAlpha(saved, 0, 0);
+	  SDL_SetSurfaceAlphaMod(saved, 0);
       SDL_BlitSurface(gpScreen, &dstrect, saved, NULL);
    }
 
    // Draw a box to the screen
-   SDL_Surface *temp = SDL_CreateRGBSurface(gpScreen->flags & (~SDL_HWSURFACE),
+   SDL_Surface *temp = SDL_CreateRGBSurface(gpScreen->flags,
       340, 60, gpScreen->format->BitsPerPixel, gpScreen->format->Rmask,
       gpScreen->format->Gmask, gpScreen->format->Bmask,
       gpScreen->format->Amask);
 
-   SDL_SetAlpha(temp, 0, 0);
+   SDL_SetSurfaceAlphaMod(temp, 0);
 
    SDL_FillRect(temp, NULL, SDL_MapRGB(temp->format, 100, 100, 100));
 
@@ -531,9 +539,10 @@ void CGeneral::DrawMessage(const char *sz)
 
    DrawUTF8Text(line, 160, y);
 
-   SDL_UpdateRect(gpScreen, 150, 300, 340, 60);
+   //SDL_UpdateRect(gpScreen, 150, 300, 340, 60);
+   UpdateScreen(150, 300, 340, 60);
 
-   PlaySound(SND_DING); // play a hint sound
+   PlayMixSound(SND_DING); // play a hint sound
 }
 
 void CGeneral::DrawTile(const CTile &t, int x, int y, int dir, int size)
@@ -646,7 +655,18 @@ void CGeneral::DrawTurn(int turn, int x, int y)
 
 void CGeneral::UpdateScreen(int x, int y, int w, int h)
 {
-   SDL_UpdateRect(gpScreen, x, y, w, h);
+   SDL_Rect rect;
+
+   rect.x = x;
+   rect.y = y;
+   rect.w = w;
+   rect.h = h;
+   
+   sdlTexture = SDL_CreateTextureFromSurface(grenderer, gpScreen);
+   SDL_RenderCopy(grenderer, sdlTexture, &rect, &rect);
+   SDL_RenderPresent(grenderer);
+   SDL_DestroyTexture(sdlTexture);
+   sdlTexture = NULL;
 }
 
 void CGeneral::PlayMusic(Mix_Music *m, int loop, int volume)
@@ -674,7 +694,7 @@ void CGeneral::PlayMusic(Mix_Music *m, int loop, int volume)
    Mix_PlayMusic(m, loop);
 }
 
-void CGeneral::PlaySound(Mix_Chunk *s, int volume)
+void CGeneral::PlayMixSound(Mix_Chunk *s, int volume)
 {
    if (g_fNoSound) {
       return;
@@ -694,7 +714,7 @@ void CGeneral::PlaySound(Mix_Chunk *s, int volume)
    Mix_PlayChannel(-1, s, 0);
 }
 
-void CGeneral::PlaySound(int num, int volume)
+void CGeneral::PlayMixSound(int num, int volume)
 {
    if (g_fNoSound) {
       return;
@@ -710,7 +730,7 @@ void CGeneral::PlaySound(int num, int volume)
       volume = (int)(MIX_MAX_VOLUME * f);
    }
 
-   PlaySound(m_snd[num], volume);
+   PlayMixSound(m_snd[num], volume);
 }
 
 void CGeneral::PlayBGMusic(int num, int volume)
@@ -751,7 +771,7 @@ void CGeneral::PlayEndRoundMusic(int volume)
 void CGeneral::Fire()
 {
    int i;
-   SDL_Surface *save = SDL_CreateRGBSurface(gpScreen->flags & (~SDL_HWSURFACE),
+   SDL_Surface *save = SDL_CreateRGBSurface(gpScreen->flags & (SDL_SWSURFACE),
       575, 130, gpScreen->format->BitsPerPixel, gpScreen->format->Rmask,
       gpScreen->format->Gmask, gpScreen->format->Bmask, gpScreen->format->Amask);
 
@@ -764,7 +784,7 @@ void CGeneral::Fire()
    SDL_BlitSurface(gpScreen, &dstrect, save, NULL);
 
    UTIL_Delay(400);
-   PlaySound(SND_FIRE);
+   PlayMixSound(SND_FIRE);
 
    for (i = 0; i < 6; i++) {
       dstrect.y = 470 - 125;
@@ -796,7 +816,7 @@ void CGeneral::AnimSelfDrawn(const CTile &t)
    int i;
    SDL_Rect dstrect;
 
-   PlaySound(SND_FLASH);
+   PlayMixSound(SND_FLASH);
    for (i = 0; i < 12; i++) {
       EraseArea(20, 265, TILE_WIDTH * 10, 303 + TILE_HEIGHT_SHOWN - 265);
       EraseArea(dstrect.x, dstrect.y, dstrect.w, 30);
@@ -848,7 +868,7 @@ void CGeneral::AnimOut(const CTile &t)
    int i;
    SDL_Rect dstrect, dhand;
 
-   SDL_Surface *save = SDL_CreateRGBSurface(gpScreen->flags & (~SDL_HWSURFACE),
+   SDL_Surface *save = SDL_CreateRGBSurface(gpScreen->flags,
       m_imgHand->w, m_imgHand->h, gpScreen->format->BitsPerPixel,
       gpScreen->format->Rmask, gpScreen->format->Gmask,
       gpScreen->format->Bmask, gpScreen->format->Amask);
@@ -862,7 +882,7 @@ void CGeneral::AnimOut(const CTile &t)
    SDL_BlitSurface(m_imgHand, NULL, gpScreen, &dhand);
    UpdateScreen(dhand.x, dhand.y, dhand.w, dhand.h);
 
-   PlaySound(SND_FLASH);
+   PlayMixSound(SND_FLASH);
    dhand.h = m_imgFlash2->h - (125 - 94);
    for (i = 0; i < 10; i++) {
       EraseArea(620 - 10 * TILE_WIDTH, 94, TILE_WIDTH * 10, 132 + TILE_HEIGHT_SHOWN - 94);
@@ -932,11 +952,11 @@ void CGeneral::LoadImages()
    m_imgFlash2 = LoadImgFile(IMAGES_DIR "flash2.bmp");
    m_imgHand = LoadImgFile(IMAGES_DIR "hand.bmp");
 
-   SDL_SetColorKey(m_imgFire1, SDL_SRCCOLORKEY, SDL_MapRGBA(m_imgFire1->format, 98, 101, 98, 0));
-   SDL_SetColorKey(m_imgFire2, SDL_SRCCOLORKEY, SDL_MapRGBA(m_imgFire2->format, 98, 101, 98, 0));
-   SDL_SetColorKey(m_imgFlash1, SDL_SRCCOLORKEY, SDL_MapRGBA(m_imgFlash1->format, 98, 101, 98, 0));
-   SDL_SetColorKey(m_imgFlash2, SDL_SRCCOLORKEY, SDL_MapRGBA(m_imgFlash2->format, 98, 101, 98, 0));
-   SDL_SetColorKey(m_imgHand, SDL_SRCCOLORKEY, SDL_MapRGBA(m_imgHand->format, 98, 101, 98, 0));
+   SDL_SetColorKey(m_imgFire1, SDL_TRUE, SDL_MapRGBA(m_imgFire1->format, 98, 101, 98, 0));
+   SDL_SetColorKey(m_imgFire2, SDL_TRUE, SDL_MapRGBA(m_imgFire2->format, 98, 101, 98, 0));
+   SDL_SetColorKey(m_imgFlash1, SDL_TRUE, SDL_MapRGBA(m_imgFlash1->format, 98, 101, 98, 0));
+   SDL_SetColorKey(m_imgFlash2, SDL_TRUE, SDL_MapRGBA(m_imgFlash2->format, 98, 101, 98, 0));
+   SDL_SetColorKey(m_imgHand, SDL_TRUE, SDL_MapRGBA(m_imgHand->format, 98, 101, 98, 0));
 }
 
 void CGeneral::DeleteImages()

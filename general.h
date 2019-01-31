@@ -100,9 +100,9 @@ public:
    void               UpdateScreen(int x = 0, int y = 0, int w = 0, int h = 0);
 
    void               PlayMusic(Mix_Music *m, int loop = -1, int volume = -1);
-   void               PlaySound(Mix_Chunk *s, int volume = -1);
+   void               PlayMixSound(Mix_Chunk *s, int volume = -1);
 
-   void               PlaySound(int num, int volume = -1);
+   void               PlayMixSound(int num, int volume = -1);
    void               PlayBGMusic(int num = 0, int volume = -1);
    void               PlayWinMusic(int volume = -1);
    void               PlayEndRoundMusic(int volume = -1);

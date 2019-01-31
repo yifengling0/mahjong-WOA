@@ -141,7 +141,7 @@ typedef struct SDL_Surface {
 #define SDL_NOFRAME	0x00000020	/* No window caption or edge frame */
 /* Used internally (read-only) */
 #define SDL_HWACCEL	0x00000100	/* Blit uses hardware acceleration */
-#define SDL_SRCCOLORKEY	0x00001000	/* Blit uses a source color key */
+#define SDL_TRUE	0x00001000	/* Blit uses a source color key */
 #define SDL_RLEACCELOK	0x00002000	/* Private flag */
 #define SDL_RLEACCEL	0x00004000	/* Surface is RLE encoded */
 #define SDL_SRCALPHA	0x00010000	/* Blit uses source alpha blending */
@@ -487,7 +487,7 @@ extern DECLSPEC void SDLCALL SDL_GetRGBA(Uint32 pixel, SDL_PixelFormat *fmt,
  * SDL_ASYNCBLIT means that SDL will try to perform asynchronous blits with
  * this surface, but you must always lock it before accessing the pixels.
  * SDL will wait for current blits to finish before returning from the lock.
- * SDL_SRCCOLORKEY indicates that the surface will be used for colorkey blits.
+ * SDL_TRUE indicates that the surface will be used for colorkey blits.
  * If the hardware supports acceleration of colorkey blits between
  * two surfaces in video memory, SDL will try to place the surface in
  * video memory. If this isn't possible or if there is no hardware
@@ -560,7 +560,7 @@ extern DECLSPEC int SDLCALL SDL_SaveBMP_RW
 
 /*
  * Sets the color key (transparent pixel) in a blittable surface.
- * If 'flag' is SDL_SRCCOLORKEY (optionally OR'd with SDL_RLEACCEL), 
+ * If 'flag' is SDL_TRUE (optionally OR'd with SDL_RLEACCEL), 
  * 'key' will be the transparent pixel in the source image of a blit.
  * SDL_RLEACCEL requests RLE acceleration for the surface if present,
  * and removes RLE acceleration if absent.
@@ -639,10 +639,10 @@ extern DECLSPEC SDL_Surface * SDLCALL SDL_ConvertSurface
  * RGBA->RGB:
  *     SDL_SRCALPHA set:
  * 	alpha-blend (using alpha-channel).
- * 	SDL_SRCCOLORKEY ignored.
+ * 	SDL_TRUE ignored.
  *     SDL_SRCALPHA not set:
  * 	copy RGB.
- * 	if SDL_SRCCOLORKEY set, only copy the pixels matching the
+ * 	if SDL_TRUE set, only copy the pixels matching the
  * 	RGB values of the source colour key, ignoring alpha in the
  * 	comparison.
  * 
@@ -653,17 +653,17 @@ extern DECLSPEC SDL_Surface * SDLCALL SDL_ConvertSurface
  *     SDL_SRCALPHA not set:
  * 	copy RGB, set destination alpha to source per-surface alpha value.
  *     both:
- * 	if SDL_SRCCOLORKEY set, only copy the pixels matching the
+ * 	if SDL_TRUE set, only copy the pixels matching the
  * 	source colour key.
  * 
  * RGBA->RGBA:
  *     SDL_SRCALPHA set:
  * 	alpha-blend (using the source alpha channel) the RGB values;
  * 	leave destination alpha untouched. [Note: is this correct?]
- * 	SDL_SRCCOLORKEY ignored.
+ * 	SDL_TRUE ignored.
  *     SDL_SRCALPHA not set:
  * 	copy all of RGBA to the destination.
- * 	if SDL_SRCCOLORKEY set, only copy the pixels matching the
+ * 	if SDL_TRUE set, only copy the pixels matching the
  * 	RGB values of the source colour key, ignoring alpha in the
  * 	comparison.
  * 
@@ -673,7 +673,7 @@ extern DECLSPEC SDL_Surface * SDLCALL SDL_ConvertSurface
  *     SDL_SRCALPHA not set:
  * 	copy RGB.
  *     both:
- * 	if SDL_SRCCOLORKEY set, only copy the pixels matching the
+ * 	if SDL_TRUE set, only copy the pixels matching the
  * 	source colour key.
  *
  * If either of the surfaces were in video memory, and the blit returns -2,

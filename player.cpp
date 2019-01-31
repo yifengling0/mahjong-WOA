@@ -1327,7 +1327,7 @@ void CBasePlayer::DrawResult()
 
    gpGeneral->DrawUTF8Text(va(msg("num_score"), m_Result.score), 420, y, 0, 0, 0, 255);
 
-   gpGeneral->UpdateScreen();
+   gpGeneral->UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
 }
 
 int CBasePlayer::IndexToLoc(int index)
@@ -1503,7 +1503,7 @@ void CPlayer::FirstChance()
       m_Hand.m_Tiles[index].tile = CTile::RandomTile();
 
 
-      gpGeneral->PlaySound(SND_SOUND3);
+      gpGeneral->PlayMixSound(SND_SOUND3);
       gpGeneral->EraseArea(DRAW_LOCATION(index), 380,
          TILE_WIDTH, TILE_HEIGHT_CONCEALED);
       gpGeneral->DrawTile(m_Hand.m_Tiles[index].tile,
@@ -1514,20 +1514,20 @@ void CPlayer::FirstChance()
 
    gpGeneral->DrawMessage(NULL);
 
-   gpGeneral->PlaySound(SND_DISCARD1);
+   gpGeneral->PlayMixSound(SND_DISCARD1);
    DrawHand();
    m_Hand.Sort();
    gpGeneral->UpdateScreen(0, 380, 640, 100);
    UTIL_Delay(800);
 
-   gpGeneral->PlaySound(SND_DISCARD1);
+   gpGeneral->PlayMixSound(SND_DISCARD1);
 
    gpGeneral->EraseArea(0, 380, 640, TILE_HEIGHT_CONCEALED);
    gpGeneral->DrawTiles(NULL, 13, 20, 396, WALL_CONCEALED);
    gpGeneral->UpdateScreen(0, 380, 640, 100);
    UTIL_Delay(1000);
 
-   gpGeneral->PlaySound(SND_DISCARD1);
+   gpGeneral->PlayMixSound(SND_DISCARD1);
    DrawHand();
    gpGeneral->UpdateScreen(0, 380, 640, 100);
 }
@@ -1541,7 +1541,7 @@ bool CPlayer::LastChance()
       return false; // not ready hand
    }
 
-   gpGeneral->PlaySound(SND_DING); // play a hint sound
+   gpGeneral->PlayMixSound(SND_DING); // play a hint sound
 
    t = RandomLong(1, 3);
 
@@ -1580,7 +1580,7 @@ bool CPlayer::LastChance()
       }
       flags |= (1 << t);
       i = 20 + TILE_WIDTH * t;
-      gpGeneral->PlaySound(SND_SOUND4);
+      gpGeneral->PlayMixSound(SND_SOUND4);
       gpGeneral->DrawTile(wall[t], i, 265, WALL_SHOWN);
       gpGeneral->UpdateScreen(i, 265, TILE_WIDTH, TILE_HEIGHT_SHOWN);
 
@@ -1760,7 +1760,7 @@ playeraction CPlayer::ActionDraw()
             break;
 
          case SDLK_UP:
-         case SDLK_KP8:
+         case SDLK_KP_8:
          case SDLK_RIGHT:
             do {
                act++;
@@ -1771,7 +1771,7 @@ playeraction CPlayer::ActionDraw()
             break;
 
          case SDLK_DOWN:
-         case SDLK_KP2:
+         case SDLK_KP_2:
          case SDLK_LEFT:
             do {
                act--;
@@ -1854,7 +1854,7 @@ playeraction CPlayer::ActionDiscard()
             continue;
 
          case SDLK_UP:
-         case SDLK_KP8:
+         case SDLK_KP_8:
          case SDLK_RIGHT:
             if (!reach) {
                do {
@@ -1867,7 +1867,7 @@ playeraction CPlayer::ActionDiscard()
             break;
 
          case SDLK_DOWN:
-         case SDLK_KP2:
+         case SDLK_KP_2:
          case SDLK_LEFT:
             if (!reach) {
                do {
@@ -1910,7 +1910,7 @@ playeraction CPlayer::ActionDiscard()
 
                case PA_REACH:
                   reach = true;
-                  gpGeneral->PlaySound(SND_REACH);
+                  gpGeneral->PlayMixSound(SND_REACH);
                   gpGeneral->DrawDotBar(445, 270, true);
                   gpGeneral->UpdateScreen(445, 270, 20, 85);
                   break;
@@ -2068,7 +2068,7 @@ playeraction CPlayer::ActionChow()
 
          switch (key) {
             case SDLK_DOWN:
-            case SDLK_KP2:
+            case SDLK_KP_2:
             case SDLK_LEFT:
                do {
                   l++;
@@ -2080,7 +2080,7 @@ playeraction CPlayer::ActionChow()
                break;
 
             case SDLK_UP:
-            case SDLK_KP8:
+            case SDLK_KP_8:
             case SDLK_RIGHT:
                do {
                   l--;
@@ -2165,7 +2165,7 @@ playeraction CPlayer::ActionKong()
          SDL_FillRect(gpScreen, &dstrect, SDL_MapRGB(gpScreen->format, 255, 0, 0));
 
          if (SDL_MUSTLOCK(gpScreen)) {
-            SDL_UnlockSurface(gpScreen);
+			 SDL_UnlockSurface(gpScreen);
          }
          gpGeneral->UpdateScreen(0, 380, 640, 100);
 
@@ -2174,7 +2174,7 @@ playeraction CPlayer::ActionKong()
 
          switch (key) {
             case SDLK_UP:
-            case SDLK_KP8:
+            case SDLK_KP_8:
             case SDLK_RIGHT:
                do {
                   l++;
@@ -2185,7 +2185,7 @@ playeraction CPlayer::ActionKong()
                break;
 
             case SDLK_DOWN:
-            case SDLK_KP2:
+            case SDLK_KP_2:
             case SDLK_LEFT:
                do {
                   l--;
@@ -2288,7 +2288,7 @@ bool CPlayer::SanGenRush()
    int index, changed = 0, num = 0;
 
    gpGeneral->DrawMessage(msg("sangenrush"));
-   gpGeneral->PlaySound(SND_SOUND2);
+   gpGeneral->PlayMixSound(SND_SOUND2);
 
    do {
       key = gpGeneral->ReadKey();
@@ -2302,7 +2302,7 @@ bool CPlayer::SanGenRush()
       m_Hand.m_Tiles[index].tile = m_SanGenRush[m_iNumSanGenRush - 1];
       num++;
 
-      gpGeneral->PlaySound(SND_SOUND3);
+      gpGeneral->PlayMixSound(SND_SOUND3);
       gpGeneral->EraseArea(DRAW_LOCATION(index), 380,
          TILE_WIDTH, TILE_HEIGHT_CONCEALED);
       gpGeneral->DrawTile(m_Hand.m_Tiles[index].tile,
@@ -2314,7 +2314,7 @@ bool CPlayer::SanGenRush()
    UTIL_Delay(200);
    gpGeneral->DrawMessage(NULL);
 
-   gpGeneral->PlaySound(SND_SOUND2);
+   gpGeneral->PlayMixSound(SND_SOUND2);
    DrawHand();
    gpGeneral->UpdateScreen(0, 380, 640, 100);
 

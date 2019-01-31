@@ -136,10 +136,10 @@ void CGame::DonDen()
    gpGeneral->UpdateScreen(0, 0, 640, 200);
    gpGeneral->EraseArea(0, 265, 640, 480 - 265);
    gpGeneral->UpdateScreen(0, 265, 640, 480 - 265);
-   gpGeneral->PlaySound(SND_DISCARD1);
+   gpGeneral->PlayMixSound(SND_DISCARD1);
    UTIL_Delay(300);
 
-   gpGeneral->PlaySound(SND_DISCARD2);
+   gpGeneral->PlayMixSound(SND_DISCARD2);
    m_pPlayer->DrawHand();
    m_pPlayer->DrawDiscarded();
    m_pBot->DrawHand();
@@ -186,12 +186,12 @@ void CGame::NewRound()
 
    gpGeneral->DrawBGFade(m_iCurGirl, 1);
 
-   gpGeneral->UpdateScreen();
+   gpGeneral->UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
 
    UTIL_Delay(1000);
    DealTiles();
 
-   gpGeneral->PlaySound(SND_DISCARD1);
+   gpGeneral->PlayMixSound(SND_DISCARD1);
 
    m_pPlayer->m_Hand.Sort();
    m_pBot->m_Hand.Sort();
@@ -207,7 +207,7 @@ void CGame::NewRound()
 
    UTIL_Delay(1000);
 
-   gpGeneral->PlaySound(SND_DISCARD1);
+   gpGeneral->PlayMixSound(SND_DISCARD1);
 
    m_pPlayer->DrawHand();
    m_pBot->DrawHand();
@@ -230,7 +230,7 @@ void CGame::NewRound()
    DrawScore();
    DrawDonDen();
 
-   gpGeneral->UpdateScreen();
+   gpGeneral->UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
 
    m_iKongs = 0;
 
@@ -290,7 +290,7 @@ void CGame::DealTiles()
       pCurrent->m_Hand.m_iNumTiles = t;
       pCurrent->DrawHand();
       pCurrent = pCurrent->m_pOpponent;
-      gpGeneral->PlaySound(SND_BOOM);
+      gpGeneral->PlayMixSound(SND_BOOM);
 
       UTIL_Delay(250);
    }
@@ -301,8 +301,8 @@ void CGame::DealTiles()
    gpGeneral->EraseArea(100, 125, TILE_WIDTH * 7, TILE_HEIGHT_WALL + 20);
    gpGeneral->DrawTiles(NULL, 7, 415, 215, WALL_CONCEALED, 0);
    gpGeneral->DrawTiles(NULL, 7, 415, 200, WALL_CONCEALED, 0);
-   gpGeneral->PlaySound(SND_BOOM);
-   gpGeneral->UpdateScreen();
+   gpGeneral->PlayMixSound(SND_BOOM);
+   gpGeneral->UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
 
    UTIL_Delay(750);
 }
@@ -342,13 +342,13 @@ void CGame::SelectCurGirl()
 
    gpGeneral->DrawUTF8Text(msg("girlselmsg"), 55, 225, 0, 255, 255, 0);
 
-   gpGeneral->UpdateScreen();
+   gpGeneral->UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
    gpGeneral->PlayBGMusic(4);
 
    while (1) {
       SDLKey key = gpGeneral->ReadKey();
       if (key == SDLK_a && !(m_iLevelClearFlag & (1 << 0))) {
-         gpGeneral->PlaySound(SND_DING);
+         gpGeneral->PlayMixSound(SND_DING);
          gpGeneral->DrawGirl(20, 20, 280, 200, 0, 0);
          gpGeneral->DrawText("A", 40, 30, 1, 250, 250, 0);
          gpGeneral->UpdateScreen(20, 20, 280, 200);
@@ -356,7 +356,7 @@ void CGame::SelectCurGirl()
          UTIL_Delay(800);
          break;
       } else if (key == SDLK_b && !(m_iLevelClearFlag & (1 << 1))) {
-         gpGeneral->PlaySound(SND_DING);
+         gpGeneral->PlayMixSound(SND_DING);
          gpGeneral->DrawGirl(340, 20, 280, 200, 1, 0);
          gpGeneral->DrawText("B", 360, 30, 1, 250, 250, 0);
          gpGeneral->UpdateScreen(340, 20, 280, 200);
@@ -364,7 +364,7 @@ void CGame::SelectCurGirl()
          UTIL_Delay(800);
          break;
       } else if (key == SDLK_c && !(m_iLevelClearFlag & (1 << 2))) {
-         gpGeneral->PlaySound(SND_DING);
+         gpGeneral->PlayMixSound(SND_DING);
          gpGeneral->DrawGirl(20, 260, 280, 200, 2, 0);
          gpGeneral->DrawText("C", 40, 270, 1, 250, 250, 0);
          gpGeneral->UpdateScreen(20, 260, 280, 200);
@@ -372,7 +372,7 @@ void CGame::SelectCurGirl()
          UTIL_Delay(800);
          break;
       } else if (key == SDLK_d && !(m_iLevelClearFlag & (1 << 3))) {
-         gpGeneral->PlaySound(SND_DING);
+         gpGeneral->PlayMixSound(SND_DING);
          gpGeneral->DrawGirl(340, 260, 280, 200, 3, 0);
          gpGeneral->DrawText("D", 360, 270, 1, 250, 250, 0);
          gpGeneral->UpdateScreen(340, 260, 280, 200);
@@ -447,10 +447,10 @@ void CGame::PlayRound()
       while (1) {
          act = pCurrent->Action(AS_DRAW);
          if (act == PA_DRAW) {
-            gpGeneral->PlaySound(SND_DISCARD1);
+            gpGeneral->PlayMixSound(SND_DISCARD1);
             break;
          } else if (act == PA_KONG || act == PA_PUNG || act == PA_CHOW) {
-            gpGeneral->PlaySound(SND_SOUND3);
+            gpGeneral->PlayMixSound(SND_SOUND3);
             pCurrent->m_pOpponent->DrawDiscarded();
             if (act == PA_KONG) {
                KongDeclared();
@@ -472,7 +472,7 @@ void CGame::PlayRound()
       while (1) {
          act = pCurrent->Action(AS_DISCARD);
          if (act == PA_DISCARD || act == PA_REACH) {
-            gpGeneral->PlaySound(SND_DISCARD2);
+            gpGeneral->PlayMixSound(SND_DISCARD2);
             if (act == PA_REACH) {
                if (pCurrent->IsBot()) {
                   gpGeneral->PlayBGMusic(2);
@@ -491,10 +491,10 @@ void CGame::PlayRound()
             break;
          } else if (act == PA_KONG) {
             KongDeclared();
-            gpGeneral->PlaySound(SND_SOUND3);
+            gpGeneral->PlayMixSound(SND_SOUND3);
 
             pCurrent->Action(AS_DRAW);
-            gpGeneral->PlaySound(SND_DISCARD1);
+            gpGeneral->PlayMixSound(SND_DISCARD1);
 
             pCurrent->DrawHand();
          } else if (act == PA_MAHJONG) {
@@ -520,7 +520,7 @@ void CGame::PlayRound()
       UTIL_Delay(1000);
       m_pPlayer->DrawHand(true);
       m_pBot->DrawHand(true);
-      gpGeneral->PlaySound(SND_DISCARD2);
+      gpGeneral->PlayMixSound(SND_DISCARD2);
 
       ready[0] = m_pPlayer->m_Hand.IsReady();
       ready[1] = m_pBot->m_Hand.IsReady();
@@ -552,7 +552,7 @@ void CGame::PlayRound()
             m_pBot->m_iScore += 1000;
          }
          UTIL_Delay(1000);
-         gpGeneral->PlaySound(SND_SOUND3);
+         gpGeneral->PlayMixSound(SND_SOUND3);
          DrawScore();
       }
 
@@ -600,7 +600,7 @@ void CGame::PlayRound()
          gpGeneral->PlayWinMusic();
          UTIL_Delay(300);
       }
-      gpGeneral->PlaySound(SND_DISCARD2);
+      gpGeneral->PlayMixSound(SND_DISCARD2);
       pWinner->DrawHand(true);
       if (pWinner->m_fReach) {
          gpGeneral->DrawTile(m_Dora[5], (int)(415 + TILE_WIDTH * 0.7 * 2),
@@ -612,9 +612,9 @@ void CGame::PlayRound()
 
       gpGeneral->DrawBG(m_iCurGirl, 1);
       pWinner->DrawHand(true);
-      gpGeneral->UpdateScreen();
+      gpGeneral->UpdateScreen(0, 0, gpScreen->w, gpScreen->h);
       UTIL_Delay(500);
-      gpGeneral->PlaySound(SND_SOUND3);
+      gpGeneral->PlayMixSound(SND_SOUND3);
       pWinner->DrawResult();
       UTIL_Delay(500);
       DrawScore(435, 300);
@@ -622,13 +622,13 @@ void CGame::PlayRound()
       UTIL_Delay(1500);
       pWinner->m_iScore += pWinner->m_Result.score;
       pWinner->m_pOpponent->m_iScore -= pWinner->m_Result.score;
-      gpGeneral->PlaySound(SND_SOUND1);
+      gpGeneral->PlayMixSound(SND_SOUND1);
       DrawScore(435, 300);
       UTIL_Delay(1500);
 
       if (m_iPendingPoint > 0) {
          pWinner->m_iScore += m_iPendingPoint;
-         gpGeneral->PlaySound(SND_SOUND4);
+         gpGeneral->PlayMixSound(SND_SOUND4);
          DrawScore(435, 300);
          m_iPendingPoint = 0;
       }

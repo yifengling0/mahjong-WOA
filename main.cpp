@@ -20,7 +20,11 @@
 
 #include "main.h"
 
+SDL_Window *gpWindow = NULL;
+SDL_Renderer *grenderer = NULL;
 SDL_Surface *gpScreen = NULL;
+SDL_Texture *sdlTexture = NULL;
+
 bool g_fNoSound = false;
 bool g_fNoMusic = false;
 
@@ -39,25 +43,27 @@ int main(int argc, char *argv[])
       fprintf(stderr, "FATAL ERROR: Couldn't initialize TTF: %s\n", SDL_GetError());
       exit(1);
    }
+   gpWindow = SDL_CreateWindow("Majong",
+	   SDL_WINDOWPOS_UNDEFINED,
+	   SDL_WINDOWPOS_UNDEFINED,
+	   640, 480,
+	   SDL_WINDOW_SHOWN);
 
-   // Initialize the display in a 640x480 24-bit mode
-   int f = (atoi(cfg.Get("OPTIONS", "FullScreen", "0")) > 0);
-   if (f) {
-      f = SDL_FULLSCREEN;
-   }
+   grenderer = SDL_CreateRenderer(gpWindow, -1, 0);
 
-   gpScreen = SDL_SetVideoMode(640, 480, 24, SDL_HWSURFACE | f);
+   gpScreen = SDL_CreateRGBSurface(0, 640, 480, 32,
+	   0x00FF0000,
+	   0x0000FF00,
+	   0x000000FF,
+	   0xFF000000);
+ 
 
+ 
    if (gpScreen == NULL) {
-      gpScreen = SDL_SetVideoMode(640, 480, 24, SDL_SWSURFACE | f);
+	   fprintf(stderr, "FATAL ERROR: Could not set video mode: %s\n", SDL_GetError());
+	   exit(1);
    }
 
-   if (gpScreen == NULL) {
-      fprintf(stderr, "FATAL ERROR: Could not set video mode: %s\n", SDL_GetError());
-      exit(1);
-   }
-
-   SDL_WM_SetCaption("Mahjong", NULL);
 
    g_fNoSound = (atoi(cfg.Get("OPTIONS", "NoSound", "0")) > 0);
    g_fNoMusic = (atoi(cfg.Get("OPTIONS", "NoMusic", "0")) > 0);
@@ -87,7 +93,22 @@ int main(int argc, char *argv[])
 void UserQuit()
 {
    if (gpScreen != NULL)
-      SDL_FreeSurface(gpScreen);
+	   SDL_FreeSurface(gpScreen);
+
+   if (sdlTexture != NULL)
+   {
+	   SDL_DestroyTexture(sdlTexture);
+   }
+
+   if (grenderer != NULL) {
+	   SDL_DestroyRenderer(grenderer);
+   }
+
+   if (gpWindow != NULL) {
+	   SDL_DestroyWindow(gpWindow);
+   }
+
+
 
    if (gpGeneral != NULL)
       delete gpGeneral;

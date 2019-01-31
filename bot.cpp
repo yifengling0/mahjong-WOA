@@ -321,7 +321,7 @@ playeraction CBot::ActionDiscard()
    switch (m_BotBrain.action) {
       case PA_REACH:
          gpGeneral->PlayBGMusic(-1);
-         gpGeneral->PlaySound(SND_REACH);
+         gpGeneral->PlayMixSound(SND_REACH);
          gpGeneral->DrawDotBar(DRAW_LOCATION(9) - 20, 99, true);
          gpGeneral->UpdateScreen(DRAW_LOCATION(9) - 20, 99, 20, 85);
          UTIL_Delay(800);
