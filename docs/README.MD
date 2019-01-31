@@ -4,11 +4,17 @@
 
 我开这个库是准备把他移植到Windows 8.1 RT/Windows 10 on ARM上， 好在我的Lumia上面玩：） 
 
+
 Alpha version：
+
 ・SDL2  ARM移植完成
+
 ・代码从SDL移植到了SDL2，WOA上能基本运行，还需要进一步调试修改BUG
 
 TODO：
+
 ・解决WAV音效无法播放问题
+
 ・WOA 听牌胡牌崩溃问题
+
 ・RT 上无法正常启动问题
